@@ -1,6 +1,10 @@
 package st10438499;
-
 import javax.swing.*;
+
+/**
+ *
+ * @author noxid
+ */
 
 public class ST10438499 {
 
@@ -50,7 +54,7 @@ public class ST10438499 {
 
             switch (mainChoice) {
                //Send Message
-                case 1: 
+                case 0: 
                     
                     String countInput = JOptionPane.showInputDialog(null, "How many messages do you want to send");
                     
@@ -109,12 +113,15 @@ public class ST10438499 {
                         //displays a message based on what the user chooses
                         switch (messageChoice) {
                             case 0:
+                                userData.addSentMessage(msg);
                                 JOptionPane.showMessageDialog(null, "Message " + i + " sent to " + recipient);
                                 break;
                             case 1:
+                                userData.addDisregardedMessage(msg);
                                 JOptionPane.showMessageDialog(null, "Message " + i + " discarded.");
                                 break;
                             case 2:
+                                userData.addStoredMessage(msg);
                                 JOptionPane.showMessageDialog(null, "Message " + i + " stored");
                                 break;
                         }
@@ -122,13 +129,13 @@ public class ST10438499 {
                     break;
                     
                     //Recently Sent Messages
-                case 2: 
+                case 1: 
                     // Show a message indicating that this feature is not yet available
                     JOptionPane.showMessageDialog(null, "Coming soon!");
                     break;
                     
                     //quit
-                case 3: 
+                case 2: 
                 case JOptionPane.CLOSED_OPTION:
                     JOptionPane.showMessageDialog(null, "Exiting Quickchat");
                     break;

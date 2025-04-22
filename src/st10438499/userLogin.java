@@ -1,10 +1,10 @@
 package st10438499;
 import java.util.Scanner;
+
 /**
  *
  * @author noxid
  */
-
 
 public class userLogin {
     
@@ -105,7 +105,7 @@ public class userLogin {
     }
 }
 
- /*I need a making a chat app and i need a java based cellphone 
+ /*I am making a chat app and i need a java based cellphone 
     checker for login credentials that contains the country code 
     of south africa followed by the number and is no more than ten characters long.
     OpenAI.2025 */
