@@ -112,7 +112,7 @@ public class userLogin {
 class CellPhoneValidator {
 
     public static boolean validateCellPhone(String cellNumber) {
-        if (cellNumber == null || !cellNumber.startsWith("+27")) {
+        if (cellNumber == null) {
             System.out.println("Cell phone incorrectly formatted or does not contain international code");
             return false;
         }
@@ -120,7 +120,7 @@ class CellPhoneValidator {
         String numberPart = cellNumber.substring(3);
 
         if (!numberPart.matches("\\d{9}")) {
-            System.out.println("Cell phone must contain exactly 9 digits after +27");
+            System.out.println("Cell phone must contain exactly 9 digits after the +");
             return false;
         }
 

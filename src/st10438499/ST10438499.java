@@ -1,5 +1,9 @@
 package st10438499;
+
 import javax.swing.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.List;
 
 /**
  *
@@ -8,28 +12,68 @@ import javax.swing.*;
 
 public class ST10438499 {
 
-    public static void main(String[] args) {
-        //asks for the user information
-        String username = JOptionPane.showInputDialog(null, "Enter username:");
-        String password = JOptionPane.showInputDialog(null, "Enter password:");
-        String cell = JOptionPane.showInputDialog(null, "Enter cell phone number");
+     static Map<String, String> users = new HashMap<>();
 
-        //creates new user
-        userLogin login = new userLogin();
+     public static void main(String[] args) {
+        userLogin Registration = new userLogin(); 
         
-        //checks the login details
-        boolean usernameValid = login.Username(username);
-        boolean passwordValid = login.Password(password);
-        boolean cellValid = CellPhoneValidator.validateCellPhone(cell);
+        //using a list of user Call and 
+        List<userClass> userList = storageJSON.loadUsers();
         
-        
-        //checks if the user entered correct data then welcoms them 
-        if (usernameValid && passwordValid && cellValid) {
-            JOptionPane.showMessageDialog(null, "Welcome to Quick Chat");
-            handleMessageFlow(); 
-        } else {
-            
-            JOptionPane.showMessageDialog(null, "Login failed");
+        while (true) {
+            String[] options = {"Register", "Login", "Exit"};
+            int choice = JOptionPane.showOptionDialog(
+                null,
+                "Welcome to QuickChat",
+                "Main Menu",
+                JOptionPane.DEFAULT_OPTION,
+                JOptionPane.PLAIN_MESSAGE,
+                null,
+                options,
+                options[0]
+            );
+
+            switch (choice) {
+                case 0: // Registering users and calling verification
+                    String newUsername = JOptionPane.showInputDialog(null, "Enter a username:");
+                    if (!Registration.Username(newUsername)) break;
+
+                    String newPassword = JOptionPane.showInputDialog(null, "Enter a password:");
+                    if (!Registration.Password(newPassword)) break;
+
+                    String newCell = JOptionPane.showInputDialog(null, "Enter your phone number (e.g. (+27784519566):");
+                    if (!CellPhoneValidator.validateCellPhone(newCell)) break;
+
+                    users.put(newUsername, newPassword);
+                    userList.add(new userClass(newUsername, newPassword, newCell)); 
+                    storageJSON.saveUsers(userList); 
+                    JOptionPane.showMessageDialog(null, "Registration successful!");
+                    
+                    continue;
+
+                case 1: // Login
+                    String username = JOptionPane.showInputDialog(null, "Enter username:");
+                    String password = JOptionPane.showInputDialog(null, "Enter password:");
+
+                    boolean found = false;
+                    for (userClass u : userList) {
+                        if (u.getUsername().equals(username) && u.getPassword().equals(password)) {
+                            JOptionPane.showMessageDialog(null, "Login successful. Welcome " + username);
+                            handleMessageFlow();
+                            found = true;
+                            break;
+                        }
+                    }
+                    
+                    if (!found) {
+                        JOptionPane.showMessageDialog(null, "Login failed. Incorrect credentials.");
+                    }
+                    break;
+                    
+                case 2: // Exit
+                case JOptionPane.CLOSED_OPTION:
+                    return;
+            }
         }
     }
 
@@ -137,7 +181,6 @@ public class ST10438499 {
                     //quit
                 case 2: 
                 case JOptionPane.CLOSED_OPTION:
-                    JOptionPane.showMessageDialog(null, "Exiting Quickchat");
                     break;
 
                 default:
@@ -148,18 +191,13 @@ public class ST10438499 {
         } while (mainChoice != 2 && mainChoice != JOptionPane.CLOSED_OPTION); 
     }
     
-    public static boolean isValidNumber(String input) {
-    if (input == null || input.isEmpty()) {
-        return false;
-    }
-    //Searches throught to make sure there are only numbers
-    for (int i = 0; i < input.length(); i++) {
-        if (!Character.isDigit(input.charAt(i))) {
-            return false; 
+     public static boolean isValidNumber(String input) {
+        if (input == null || input.isEmpty()) return false;
+        for (char c : input.toCharArray()) {
+            if (!Character.isDigit(c)) return false;
         }
+        return true;
     }
-
-    return true; 
 }
     
-}
+
