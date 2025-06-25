@@ -11,9 +11,15 @@ import java.util.List;
  */
 
 public class ST10438499 {
+    
+    static List<Message> sentMessages = messageStorageJSON.loadMessages("sentMessages.json");
+    static List<Message> storedMessages = messageStorageJSON.loadMessages("storedMessages.json");
+    static List<Message> discardedMessages = messageStorageJSON.loadMessages("discardedMessages.json");
 
-     static Map<String, String> users = new HashMap<>();
-
+    static Map<String, String> users = new HashMap<>();
+    static String currentSender = null; 
+ 
+     
      public static void main(String[] args) {
         userLogin Registration = new userLogin(); 
         
@@ -32,7 +38,7 @@ public class ST10438499 {
                 options,
                 options[0]
             );
-
+            
             switch (choice) {
                 case 0: // Registering users and calling verification
                     String newUsername = JOptionPane.showInputDialog(null, "Enter a username:");
@@ -59,6 +65,7 @@ public class ST10438499 {
                     for (userClass u : userList) {
                         if (u.getUsername().equals(username) && u.getPassword().equals(password)) {
                             JOptionPane.showMessageDialog(null, "Login successful. Welcome " + username);
+                            currentSender = username;
                             handleMessageFlow();
                             found = true;
                             break;
@@ -79,7 +86,9 @@ public class ST10438499 {
 
     public static void handleMessageFlow() {
         
-        String[] mainOptions = {"Send Message", "Recently Sent Messages", "Quit"};
+        String[] mainOptions = {"Send Message", "View Sent Messages", "Manage Sent Messages", "Quit"};
+
+
         int mainChoice;
 
         //a repeat until loop until quit is chosen
@@ -130,7 +139,7 @@ public class ST10438499 {
                             continue;
                         }
 
-                        Message msg = new Message(recipient, messageText);
+                        Message msg = new Message(currentSender, recipient, messageText);
 
                         //message summary
                         JOptionPane.showMessageDialog(null,
@@ -153,19 +162,31 @@ public class ST10438499 {
                             messageOptions,
                             messageOptions[0]
                         );
+                        
+                       
+                
+                        
 
                         //displays a message based on what the user chooses
                         switch (messageChoice) {
+                            //Sending message
                             case 0:
-                                userData.addSentMessage(msg);
+                                sentMessages.add(msg);
+                                messageStorageJSON.saveMessages(sentMessages, "sentMessages.json");
                                 JOptionPane.showMessageDialog(null, "Message " + i + " sent to " + recipient);
                                 break;
+                                
+                            //Disgarding message    
                             case 1:
-                                userData.addDisregardedMessage(msg);
+                                discardedMessages.add(msg);
+                                messageStorageJSON.saveMessages(discardedMessages, "discardedMessages.json");
                                 JOptionPane.showMessageDialog(null, "Message " + i + " discarded.");
                                 break;
+                                
+                            //Storing message     
                             case 2:
-                                userData.addStoredMessage(msg);
+                                storedMessages.add(msg);
+                                messageStorageJSON.saveMessages(storedMessages, "storedMessages.json");
                                 JOptionPane.showMessageDialog(null, "Message " + i + " stored");
                                 break;
                         }
@@ -174,18 +195,51 @@ public class ST10438499 {
                     
                     //Recently Sent Messages
                 case 1: 
-                    // Show a message indicating that this feature is not yet available
-                    JOptionPane.showMessageDialog(null, "Coming soon!");
+                    if (sentMessages.isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "No sent messages found.");
+                        } else {
+                        StringBuilder sentMsgDisplay = new StringBuilder("Sent Messages:\n\n");
+                        for (Message msg : sentMessages) {
+                            sentMsgDisplay.append("Message ID: ").append(msg.getMessageId()).append("\n")
+                                    .append("Hash: ").append(msg.getMessageHash()).append("\n")
+                                    .append("Recipient: ").append(msg.getRecipient()).append("\n")
+                                    .append("Message: ").append(msg.getMessage()).append("\n\n");
+                        }
+                        JOptionPane.showMessageDialog(null, sentMsgDisplay.toString());
+                    }
+                    
                     break;
                     
-                    //quit
-                case 2: 
+                case 2: // View Stored Messages
+                    if (storedMessages.isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "No stored messages found.");
+                    } else {
+                        StringBuilder storedMsgDisplay = new StringBuilder("Stored Messages:\n\n");
+                    for (Message msg : storedMessages) {
+                        storedMsgDisplay.append("Message ID: ").append(msg.getMessageId()).append("\n")
+                            .append("Hash: ").append(msg.getMessageHash()).append("\n")
+                            .append("Recipient: ").append(msg.getRecipient()).append("\n")
+                            .append("Message: ").append(msg.getMessage()).append("\n\n");
+                    }
+                        JOptionPane.showMessageDialog(null, storedMsgDisplay.toString());
+                    }
+                    break;
+                
+                //calls the manage sent messages class
+                case 3:
+                    manageSentMessages.manage(sentMessages);
+                    sentMessages = messageStorageJSON.loadMessages("sentMessages.json");
+                    break;
+                        
+                //quit
+                case 4: 
                 case JOptionPane.CLOSED_OPTION:
                     break;
 
                 default:
                     break;
             }
+              
             
             // Repeats until quit option is chosen
         } while (mainChoice != 2 && mainChoice != JOptionPane.CLOSED_OPTION); 

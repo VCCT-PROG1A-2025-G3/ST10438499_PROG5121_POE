@@ -6,6 +6,8 @@ import java.util.Scanner;
  * @author noxid
  */
 
+//This Class is for error detection
+
 public class userLogin {
     
 // This method creates a new user account

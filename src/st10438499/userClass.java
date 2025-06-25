@@ -38,6 +38,7 @@ public class userClass {
         );
     }
 
+    public String getCellphone() { return cellphone; }
     public String getUsername() { return username; }
     public String getPassword() { return password; }
 }
